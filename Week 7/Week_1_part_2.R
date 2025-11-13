@@ -217,11 +217,330 @@ binomial_train_dtm <- DocumentTermMatrix(
 )
 dim(binomial_train_dtm)
 
-library(glmnet)
-
 binomial_model <- glmnet(
   as.matrix(binomial_train_dtm),
   binomial_train_labels,
   family = 'binomial'
 )
 
+topic_1_test_docs <- Corpus(
+  DirSource(
+    '20news-test/comp.graphics',
+    encoding='UTF-8'
+  )
+)
+topic_2_test_docs <- Corpus(
+  DirSource(
+    '20news-test/rec.motorcycles',
+    encoding='UTF-8'
+  )
+)
+binomial_test_docs <- c(
+  as.list(topic_1_test_docs),
+  as.list(topic_2_test_docs)
+)
+binomial_test_docs <- Corpus(VectorSource(binomial_test_docs))
+labels_test_1 <- replicate(length(topic_1_test_docs), 'comp.graphics')
+labels_test_2 <- replicate(length(topic_2_test_docs), 'rec.motorcycles')
+binomial_test_labels <- c(labels_test_1, labels_test_2)
+cleaned_binomial_test_docs <- tm_map(binomial_test_docs, tolower)
+
+cleaned_binomial_test_docs <- tm_map(cleaned_binomial_test_docs, removePunctuation)
+
+cleaned_binomial_test_docs <- tm_map(cleaned_binomial_test_docs, removeWords,
+                                     stopwords('en'))
+
+cleaned_binomial_test_docs <- tm_map(cleaned_binomial_test_docs, stemDocument)
+
+binomial_test_dtm <- DocumentTermMatrix(
+  cleaned_binomial_test_docs, 
+  control=list(
+    dictionary=observed_vocabulary
+  )
+)
+
+binomial_test_dtm <- data.matrix(binomial_test_dtm)
+
+binomial_probabilities <- predict(
+  binomial_model,
+  binomial_test_dtm,
+  s=tail(binomial_model$lambda, 1),
+  type='response'
+)
+
+binomial_predictions <- ifelse(
+  binomial_probabilities>0.5,
+  1,
+  0
+)
+
+binomial_test_labels <- (
+  binomial_test_labels == 'comp.graphics'
+) * 1
+
+binomial_classification_error <- mean(
+  binomial_predictions != binomial_test_labels)
+print(paste('Accuracy',1-binomial_classification_error))  
+
+#Execise 6
+binomial_dtm_binary <- DocumentTermMatrix(
+  cleaned_binomial_docs,
+  control = list(weighting = weightBin)
+)
+
+binomial_dtm_tfidf <- DocumentTermMatrix(
+  cleaned_binomial_docs,
+  control = list(weighting = weightTfIdf)
+)
+
+dim(binomial_dtm_binary)
+dim(binomial_dtm_tfidf)
+
+binomial_train_dtm_binary <- DocumentTermMatrix(
+  cleaned_binomial_docs,
+  control = list(
+    dictionary = observed_vocabulary,
+    weighting = weightBin
+  )
+)
+
+binomial_train_dtm_tfidf <- DocumentTermMatrix(
+  cleaned_binomial_docs,
+  control = list(
+    dictionary = observed_vocabulary,
+    weighting = weightTfIdf
+  )
+)
+
+binomial_model_binary <- glmnet(
+  as.matrix(binomial_train_dtm_binary),
+  binomial_train_labels,
+  family = 'binomial'
+)
+
+binomial_model_tfidf <- glmnet(
+  as.matrix(binomial_train_dtm_tfidf),
+  binomial_train_labels,
+  family = 'binomial'
+)
+
+binomial_test_dtm_binary <- DocumentTermMatrix(
+  cleaned_binomial_test_docs,
+  control = list(
+    dictionary = observed_vocabulary,
+    weighting = weightBin
+  )
+)
+
+binomial_test_dtm_tfidf <- DocumentTermMatrix(
+  cleaned_binomial_test_docs,
+  control = list(
+    dictionary = observed_vocabulary,
+    weighting = weightTfIdf
+  )
+)
+
+binomial_test_dtm_binary <- data.matrix(binomial_test_dtm_binary)
+binomial_test_dtm_tfidf <- data.matrix(binomial_test_dtm_tfidf)
+
+# Predict probabilities
+binomial_probabilities_binary <- predict(
+  binomial_model_binary,
+  binomial_test_dtm_binary,
+  s = tail(binomial_model_binary$lambda, 1),
+  type = 'response'
+)
+
+binomial_probabilities_tfidf <- predict(
+  binomial_model_tfidf,
+  binomial_test_dtm_tfidf,
+  s = tail(binomial_model_tfidf$lambda, 1),
+  type = 'response'
+)
+
+# Convert probabilities to 0/1 predictions
+binomial_predictions_binary <- ifelse(binomial_probabilities_binary > 0.5, 1, 0)
+binomial_predictions_tfidf <- ifelse(binomial_probabilities_tfidf > 0.5, 1, 0)
+
+# Compute accuracy
+error_binary <- mean(binomial_predictions_binary != binomial_test_labels)
+error_tfidf <- mean(binomial_predictions_tfidf != binomial_test_labels)
+
+cat("Accuracy (Binary):", 1 - error_binary, "\n")
+cat("Accuracy (TF-IDF):", 1 - error_tfidf, "\n")
+
+#End of Execise
+
+#Execise 7
+
+binomial_dtm_reduced <- removeSparseTerms(binomial_dtm, 0.98)
+
+dim(binomial_dtm_reduced)
+
+reduced_vocabulary <- Terms(binomial_dtm_reduced)
+length(reduced_vocabulary)
+
+# Training DTM
+binomial_train_dtm_reduced <- DocumentTermMatrix(
+  cleaned_binomial_docs,
+  control = list(dictionary = reduced_vocabulary)
+)
+
+# Test DTM (must use the same vocabulary!)
+binomial_test_dtm_reduced <- DocumentTermMatrix(
+  cleaned_binomial_test_docs,
+  control = list(dictionary = reduced_vocabulary)
+)
+
+# Convert to matrices for glmnet
+binomial_train_matrix_reduced <- as.matrix(binomial_train_dtm_reduced)
+binomial_test_matrix_reduced <- as.matrix(binomial_test_dtm_reduced)
+
+binomial_model_reduced <- glmnet(
+  binomial_train_matrix_reduced,
+  binomial_train_labels,
+  family = 'binomial'
+)
+
+binomial_probabilities_reduced <- predict(
+  binomial_model_reduced,
+  binomial_test_matrix_reduced,
+  s = tail(binomial_model_reduced$lambda, 1),
+  type = 'response'
+)
+
+binomial_predictions_reduced <- ifelse(binomial_probabilities_reduced > 0.5, 1, 0)
+
+# Calculate accuracy
+error_reduced <- mean(binomial_predictions_reduced != binomial_test_labels)
+cat("Accuracy (after removing sparse terms):", 1 - error_reduced, "\n")
+#End of Execise
+
+#Execise 8
+# Use the raw corpus (no lowercasing, no stopword removal, no stemming)
+binomial_dtm_original <- DocumentTermMatrix(binomial_docs)
+
+# Check dimensions (number of documents and unique words)
+dim(binomial_dtm_original)
+
+original_vocabulary <- Terms(binomial_dtm_original)
+
+# Training DTM
+binomial_train_dtm_original <- DocumentTermMatrix(
+  binomial_docs,
+  control = list(dictionary = original_vocabulary)
+)
+
+# Test DTM (must use same vocabulary!)
+binomial_test_dtm_original <- DocumentTermMatrix(
+  binomial_test_docs,
+  control = list(dictionary = original_vocabulary)
+)
+
+binomial_model_original <- glmnet(
+  as.matrix(binomial_train_dtm_original),
+  binomial_train_labels,
+  family = 'binomial'
+)
+
+binomial_probabilities_original <- predict(
+  binomial_model_original,
+  as.matrix(binomial_test_dtm_original),
+  s = tail(binomial_model_original$lambda, 1),
+  type = 'response'
+)
+
+binomial_predictions_original <- ifelse(binomial_probabilities_original > 0.5, 1, 0)
+
+error_original <- mean(binomial_predictions_original != binomial_test_labels)
+cat("Accuracy (non-preprocessed text):", 1 - error_original, "\n")
+
+#End of Execise
+
+cleaned_topic_docs <- tm_map(topic_docs, tolower)
+cleaned_topic_docs <- tm_map(cleaned_topic_docs, removePunctuation)
+cleaned_topic_docs <- tm_map(cleaned_topic_docs, removeWords, stopwords('en'))
+
+topic_dtm <- DocumentTermMatrix(cleaned_topic_docs)
+
+findFreqTerms(
+  topic_dtm,
+  lowfreq=100
+)
+
+findAssocs(
+  topic_dtm,
+  'software',
+  corlimit=0.75 # the correlation limit (between 0 and 1)
+)
+
+#Further Exercise 1
+graphics_docs <- Corpus(DirSource("20news-train/comp.graphics"))
+motor_docs <- Corpus(DirSource("20news-train/rec.motorcycles"))
+
+graphics_clean <- tm_map(graphics_docs, content_transformer(tolower))
+graphics_clean <- tm_map(graphics_clean, removePunctuation)
+graphics_clean <- tm_map(graphics_clean, removeWords, stopwords("en"))
+graphics_clean <- tm_map(graphics_clean, stemDocument)
+
+motor_clean <- tm_map(motor_docs, content_transformer(tolower))
+motor_clean <- tm_map(motor_clean, removePunctuation)
+motor_clean <- tm_map(motor_clean, removeWords, stopwords("en"))
+motor_clean <- tm_map(motor_clean, stemDocument)
+
+graphics_dtm <- DocumentTermMatrix(graphics_clean)
+motor_dtm <- DocumentTermMatrix(motor_clean)
+
+findFreqTerms(graphics_dtm, lowfreq = 50)
+findFreqTerms(motor_dtm, lowfreq = 50)
+
+graphics_terms <- findFreqTerms(graphics_dtm, lowfreq = 50)
+motor_terms <- findFreqTerms(motor_dtm, lowfreq = 50)
+common_terms <- intersect(graphics_terms, motor_terms)
+common_terms
+
+findAssocs(graphics_dtm, "file", 0.2)
+findAssocs(motor_dtm, "file", 0.2)
+
+#Further Exercise 2
+space_docs <- Corpus(DirSource("20news-train/sci.space"))
+guns_docs <- Corpus(DirSource("20news-train/talk.politics.guns"))
+
+combined_docs <- c(as.list(space_docs), as.list(guns_docs))
+combined_corpus <- Corpus(VectorSource(combined_docs))
+labels <- c(rep("sci.space", length(space_docs)), rep("talk.politics.guns", length(guns_docs)))
+
+cleaned <- tm_map(combined_corpus, content_transformer(tolower))
+cleaned <- tm_map(cleaned, removePunctuation)
+cleaned <- tm_map(cleaned, removeWords, stopwords("en"))
+cleaned <- tm_map(cleaned, stemDocument)
+
+dtm <- DocumentTermMatrix(cleaned)
+labels_bin <- (labels == "sci.space") * 1
+
+model <- glmnet(as.matrix(dtm), labels_bin, family = "binomial")
+
+#Further Exercise 3
+space_docs <- Corpus(DirSource("20news-train/sci.space"))
+guns_docs  <- Corpus(DirSource("20news-train/talk.politics.guns"))
+
+clean_corpus <- function(corpus) {
+  corpus <- tm_map(corpus, content_transformer(tolower))
+  corpus <- tm_map(corpus, removePunctuation)
+  corpus <- tm_map(corpus, removeNumbers)
+  corpus <- tm_map(corpus, removeWords, stopwords("en"))
+  corpus <- tm_map(corpus, stemDocument)
+  return(corpus)
+}
+
+space_clean <- clean_corpus(space_docs)
+guns_clean  <- clean_corpus(guns_docs)
+
+dtm_space <- DocumentTermMatrix(space_clean)
+dtm_guns  <- DocumentTermMatrix(guns_clean)
+
+findFreqTerms(dtm_space, 40)
+findFreqTerms(dtm_guns, 40)
+
+findAssocs(dtm_space, "space", 0.3)
+findAssocs(dtm_guns, "gun", 0.3)
