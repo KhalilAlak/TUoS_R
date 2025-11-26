@@ -122,7 +122,7 @@ ggparcoord(
   labs(colour = "Region", x = "Variables", y = "Scaled values",
        title = "Parallel coordinates of education data", caption = "World Bank")
 
-# SPIDER CHART (Pages 9–10)
+# SPIDER CHART
 
 education$year <- NULL
 
