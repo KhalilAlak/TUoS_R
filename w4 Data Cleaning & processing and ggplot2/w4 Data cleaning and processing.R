@@ -1,8 +1,8 @@
-library(tidyverse)  # load library
+library(tidyverse)
 str(mpg)
 filter(mpg, manufacturer=="audi")
 filter(mpg, displ > 2)
-filter(mpg, displ > 2 & cyl > 6)  # how to turn it into a pipe-dplyr way?
+filter(mpg, displ > 2 & cyl > 6) 
 
 # Multiple conditions
 filter(mpg, manufacturer=="audi", year==1999)
@@ -33,8 +33,8 @@ filter(mpg, (manufacturer %in% c("audi","chevrolet")), year==1999) %>%
   count(manufacturer)
 
 # filtering for sampling
-sample_frac(mpg, 0.05, replace=TRUE) # sample 5% of the data
-sample_n(mpg, 10, replace=TRUE) # sample of 10 rows
+sample_frac(mpg, 0.05, replace=TRUE)
+sample_n(mpg, 10, replace=TRUE)
 
 rio2016Medals <- read_csv("Rio2016.csv")
 arrange(rio2016Medals, Country)
@@ -48,7 +48,7 @@ rio2016Medals %>%
 #task 2--------------------------------
 
 select(mpg, manufacturer, hwy)
-select(mpg, starts_with("d")) # Selecting with pattern
+select(mpg, starts_with("d"))
 
 # Combine select + filter + arrange with pipes
 mpg %>% 
@@ -98,10 +98,9 @@ head(meals)
 # check summary
 summary(meals$FSMTaken)
 # significant difference between median & mean --> mean affected by outliers --> potential problem.
-# 17 NAs
 
 mean(meals$FSMTaken)  # NA
-mean(meals$FSMTaken, na.rm=TRUE) # NA removed, but mean is still suspiciously high.
+mean(meals$FSMTaken, na.rm=TRUE)
 
 meals |>
   filter(FSMTaken != 999) |>
