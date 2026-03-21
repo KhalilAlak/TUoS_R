@@ -132,13 +132,13 @@ layout(matrix(1:3, ncol=3))
 plot(mod_dist, which=1) 
 plot(mod_climb, which=1) 
 plot(mod_hills, which=1) 
-#execise 1
+#Exercise 1
 mod_climb <- lm(
   formula = time ~ climb,
   data = hills_train
 )
 summary(mod_climb)
-#Execise 2
+#Exercise 2
 mod_climb<- lm(
   formula=time~climb,
   data=hills_train
@@ -158,7 +158,7 @@ plot(
   mod_climb,
   which = 1
 )
-#Execise 3
+#Exercise 3
 # Make a copy of the test data
 hills_climb_test <- hills_test
 

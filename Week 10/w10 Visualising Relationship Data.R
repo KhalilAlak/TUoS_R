@@ -58,7 +58,7 @@ geom_nodes(size=5,aes(colour=Region ))+
 theme_blank()+
 labs(caption='WDI School enrollment and progression datasets')
 
-# Execise 1
+# Exercise 1
 thresholds <- c(0.75, 1.0, 1.25)
 distance_methods <- c("euclidean", "manhattan", "maximum")
 
@@ -130,7 +130,7 @@ for (layout_name in names(layouts)) {
   )
 }
 
-#End of Execise 2
+#End of Exercise 2
 
 install.packages("ggdendro")
 library(ggdendro)

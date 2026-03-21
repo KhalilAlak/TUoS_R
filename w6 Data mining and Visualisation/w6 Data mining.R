@@ -136,7 +136,7 @@ ggplot(G20, aes(area = gdp_mil_usd, fill = hdi, label=country, subgroup = region
   labs(title="Distribution of countries by GDP",
        fill="Human\ndevelopment\nindex",
        caption="G20 data")
-#Execise 4 
+#Exercise 4 
 
 df <- mpg %>%
   group_by(manufacturer) %>%
@@ -144,7 +144,8 @@ df <- mpg %>%
     count = n(),
     avg_fuel = mean((cty + hwy) / 2)
   )
-#End of Execise
+#End of Exercise
+
 install.packages("gridExtra")
 library("gridExtra")
 grid.arrange(size.plot, colour.plot, shape.plot, ncol = 1)
@@ -180,7 +181,7 @@ ggplot(mpg, aes(cty, hwy))+geom_point()+
   labs(x="City", y="Highway", title="Comparing fuel economy",
        caption="mpg dataset")
 
-#Execise 5
+#Exercise 5
 ggplot(mpg, aes(x = cty, y = hwy)) +
   geom_point() +
   labs(
@@ -207,7 +208,7 @@ ggplot(mpg, aes(x = cty, y = hwy)) +
     title = "Jittered Points with Linear Fit",
     caption = "mpg dataset"
   )
-#End of Execise
+#End of Exercise
 
 data("economics")
 ggplot(economics, aes(x=date, y=unemploy))+geom_line()+
@@ -251,7 +252,7 @@ ggplot(economics, aes(x=date))+
                       values=c("Unemployed"="red",
                                "Total population"="blue"))
 
-#Execise 6
+#Exercise 6
 library(ggplot2)
 
 data("economics")  # Load the dataset
@@ -284,7 +285,7 @@ ggplot(economics, aes(x = date, y = unemp_pct)) +
     caption = "economics dataset"
   )
 head(economics)
-#End of Execise
+#End of Exercise
 
 hist1<-ggplot(mpg, aes(cty))+
   geom_histogram(bins=10, fill="lightgreen")+ labs(x="Fuel economy in the city",
@@ -298,7 +299,7 @@ hist3<-ggplot(mpg, aes(cty))+
        caption="mpg dataset", title='Breaks')
 grid.arrange(hist1, hist2, hist3, ncol=1)
 
-#Execise 7
+#Exercise 7
 ggplot(mpg, aes(x = displ)) +
   geom_histogram(breaks = c(1, 3, 5, 7), fill = "skyblue", color = "black") +
   labs(
@@ -333,7 +334,7 @@ ggplot(mpg, aes(x = cty, y = hwy)) +
     fill = "Count",
     caption = "mpg dataset"
   )
-#End of Execise
+#End of Exercise
 
 ggplot(mpg, aes(class, cty)) +
   geom_boxplot(varwidth=TRUE, fill="plum") +
@@ -370,9 +371,9 @@ ggplot(mpg, aes(x = factor(cyl), y = displ)) +
     y = "Engine Displacement",
     caption = "mpg dataset"
   )
-#End of Execise
+#End of Exercise
 
-#Execise 9
+#Exercise 9
 ggplot(diamonds, aes(x = carat, y = price, color = cut, size = clarity)) +
   geom_point(alpha = 0.6) +
   labs(

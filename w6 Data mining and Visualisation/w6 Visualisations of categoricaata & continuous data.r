@@ -144,7 +144,8 @@ ggplot(confusion_matrix_mlr_df, aes(x = Predicted, y = Actual)) +
   scale_fill_gradient(low = "lightblue", high = "steelblue") +
   labs(title = "Confusion Matrix", x = "Predicted Label", y = "Actual Label") +
   theme_minimal()
-#Execise 1
+
+#Exercise 1
 binarySpecies <- 'setosa'
 
 ggplot(
@@ -168,7 +169,7 @@ ggplot(
     size = 5
   )
 
-#Execise 2
+#Exercise 2
 iris_train$binarySpecies <- iris_train$Species == 'virginica'
 iris_train$binarySpecies <- iris_train$binarySpecies * 1
 iris_binary_model_sepal <- glm(
@@ -195,7 +196,7 @@ iris_test$binarySpecies <- iris_test$binarySpecies * 1
 error_sepal <- mean(binomial_predictions_sepal != iris_test$binarySpecies)
 print(paste('Accuracy (Sepal features):', 1 - error_sepal))
 
-#Execise 3
+#Exercise 3
 decision_tree_sepal_model <- rpart(
   binarySpecies ~ Sepal.Length + Sepal.Width,
   data = iris_train,
@@ -226,7 +227,7 @@ ggplot(confusion_matrix_sepal_df, aes(x = Predicted, y = Actual)) +
   labs(title = "Confusion Matrix (Sepal Features)", x = "Predicted Label", y = "Actual Label") +
   theme_minimal()
 
-#Execise 4
+#Exercise 4
 
 iris_train$binarySpecies <- iris_train$Species == 'setosa'
 iris_train$binarySpecies <- iris_train$binarySpecies * 1
@@ -270,4 +271,4 @@ iris_test$binarySpecies <- iris_test$binarySpecies * 1
 versicolor_error <- mean(decision_tree_versicolor_predictions != iris_test$binarySpecies)
 print(paste('Versicolor Accuracy:', 1 - versicolor_error))
 
-#End of Execise
+#End of Exercise

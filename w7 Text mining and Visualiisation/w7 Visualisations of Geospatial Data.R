@@ -21,7 +21,7 @@ get_stadiamap(sheffield, zoom = 15, maptype="stamen_toner_lite") %>%
   geom_point(data=sheffieldCameras, aes(x=lon, y=lat), colour="red")+
   labs(title="Position of CCTV cameras in Sheffield city centre in 2017",
        caption="Data: Sheffield city council, 2017")
-#Execise 1
+#Exercise 1
 install.packages("readr")
 library(readr)
 library(tidyverse)
@@ -71,7 +71,7 @@ ggmap(map_cathedral) +
     title = "CCTV Cameras near Sheffield Cathedral (2017)",
     caption = "Data: Sheffield City Council, 2017"
   )
-#End of Execise
+#End of Exercise
 
 install.packages("osmdata")
 library(osmdata)
@@ -222,7 +222,7 @@ ggplot() +
                                                                             expand = FALSE)+
   theme(legend.position = "none")+ labs(title = "CCTV coverage, restaurants, pubs and in Sheffield City Center")
 
-#Execise 2
+#Exercise 2
 options(timeout = 120)
 set_overpass_url("https://overpass.kumi.systems/api/interpreter")
 
@@ -278,7 +278,7 @@ ggplot() +
     caption = "Data: OSM, Sheffield City Council, data.police.uk"
   )
 
-#End of Execise
+#End of Exercise
 
 world_map <- map_data("world")
 ggplot(world_map, aes(x = long, y = lat, group = group)) +
@@ -322,7 +322,7 @@ ggplot(countryDataWDIMap,aes(long,lat,group=group))+
        title="World map coloured by GDP per capita growth in 2019",
        caption="Data source: World Development Indicators")
 
-#Execise 3
+#Exercise 3
 world_map <- map_data("world")
 countryDataWDI <- WDI(indicator = "SP.POP.TOTL", start = 2020, end = 2020)
 
@@ -369,4 +369,4 @@ lifeexp <- WDI(indicator = "SP.DYN.LE00.IN", start = 2020, end = 2020)
 
 world_map_gdp <- left_join(world_map, gdp, by = c("region" = "country"))
 
-#End of Execise
+#End of Exercise

@@ -44,12 +44,12 @@ print(example_doc)
 tokens <- Boost_tokenizer(example_doc)
 summary(tokens)
 
-#Execise 1
+#Exercise 1
 tokens <- MC_tokenizer(example_doc)
 summary(tokens)
 
 view(tokens)
-#End of Execise
+#End of Exercise
 
 removePunctuation(example_doc)
 
@@ -67,7 +67,7 @@ removeWords(
   stops
 )
 
-#Execise 2
+#Exercise 2
 tokens <- strsplit(example_doc, "\\s+")[[1]]
 print(tokens[1:20]) 
 
@@ -77,7 +77,7 @@ library(tm)
 stops <- stopwords("en")
 tokens_clean <- removeWords(tokens_lower, stops)
 print(tokens_clean[1:20])
-#End of Execise
+#End of Exercise
 
 removeWords(
   tolower(tokens),
@@ -87,7 +87,7 @@ removeWords(
 stemDocument(
   example_doc
 )
-#Execise 3
+#Exercise 3
 
 text_lower <- tolower(example_doc)
 
@@ -100,7 +100,7 @@ text_stemmed <- stemDocument(text_nostop)
 
 print(text_stemmed)
 
-#End of Execise
+#End of Exercise
 
 binomial_docs <- Corpus(
   VectorSource(binomial_docs)
@@ -140,13 +140,13 @@ binomial_dtm <- DocumentTermMatrix(
 )
 binomial_dtm
 
-#Execise 4
+#Exercise 4
 binomial_dtm <- DocumentTermMatrix(cleaned_binomial_docs)
 
 original_dtm <- DocumentTermMatrix(binomial_docs)
 original_dtm
 
-#End of Execise
+#End of Exercise
 
 inspect(binomial_dtm[1:3,])
 
@@ -177,7 +177,7 @@ inspect(binomial_dtm_tfidf[1:3,])
 
 removeSparseTerms(binomial_dtm, 0.98)
 
-#Execise 5
+#Exercise 5
 library(tm)
 
 corpus <- cleaned_binomial_docs
@@ -199,7 +199,7 @@ ncol(removeSparseTerms(binomial_dtm, 0.95))   # threshold = 0.95
 ncol(removeSparseTerms(binomial_dtm, 0.90))   # threshold = 0.90
 ncol(removeSparseTerms(binomial_dtm, 0.80))   # threshold = 0.80
 
-#End of Execise
+#End of Exercise
 
 binomial_dtm
 binomial_train_dtm
@@ -282,7 +282,7 @@ binomial_classification_error <- mean(
   binomial_predictions != binomial_test_labels)
 print(paste('Accuracy',1-binomial_classification_error))  
 
-#Execise 6
+#Exercise 6
 binomial_dtm_binary <- DocumentTermMatrix(
   cleaned_binomial_docs,
   control = list(weighting = weightBin)
@@ -369,9 +369,9 @@ error_tfidf <- mean(binomial_predictions_tfidf != binomial_test_labels)
 cat("Accuracy (Binary):", 1 - error_binary, "\n")
 cat("Accuracy (TF-IDF):", 1 - error_tfidf, "\n")
 
-#End of Execise
+#End of Exercise
 
-#Execise 7
+#Exercise 7
 
 binomial_dtm_reduced <- removeSparseTerms(binomial_dtm, 0.98)
 
@@ -414,9 +414,9 @@ binomial_predictions_reduced <- ifelse(binomial_probabilities_reduced > 0.5, 1, 
 # Calculate accuracy
 error_reduced <- mean(binomial_predictions_reduced != binomial_test_labels)
 cat("Accuracy (after removing sparse terms):", 1 - error_reduced, "\n")
-#End of Execise
+#End of Exercise
 
-#Execise 8
+#Exercise 8
 # Use the raw corpus (no lowercasing, no stopword removal, no stemming)
 binomial_dtm_original <- DocumentTermMatrix(binomial_docs)
 
@@ -455,7 +455,7 @@ binomial_predictions_original <- ifelse(binomial_probabilities_original > 0.5, 1
 error_original <- mean(binomial_predictions_original != binomial_test_labels)
 cat("Accuracy (non-preprocessed text):", 1 - error_original, "\n")
 
-#End of Execise
+#End of Exercise
 
 cleaned_topic_docs <- tm_map(topic_docs, tolower)
 cleaned_topic_docs <- tm_map(cleaned_topic_docs, removePunctuation)
